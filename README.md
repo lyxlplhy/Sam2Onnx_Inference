@@ -1,4 +1,4 @@
-# OrtInference
+# Sam2Onnx_Inference
 文件包含Model.h、Sam2.h、Sam2.cpp和测试代码main.cpp
 
 目前完成：
