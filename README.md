@@ -2,7 +2,7 @@
 文件包含Model.h、Sam2.h、Sam2.cpp和测试代码main.cpp
 
 目前完成：
-  * Sam2单帧照片的目标分割，使用点或者框作为提示信息(不使用记忆模块)
+  * Sam2单帧照片的目标分割，使用点或者框作为提示信息(节省推理效率，去除了视频推理中记忆模块的使用)
   * Sam2所使用onnx权重格式生成代码[Sam2Onnx_Inference](https://github.com/lyxlplhy/Sam2-collection/blob/master/README.md#onnx%E5%AF%BC%E5%87%BA)
 
 # 依赖
