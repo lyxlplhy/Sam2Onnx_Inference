@@ -4,7 +4,7 @@
 目前完成：
   * Sam2单帧照片的目标分割，使用点或者框作为提示信息(节省推理效率，去除了视频推理中记忆模块的使用)
   * Sam2所使用onnx权重格式生成代码[Sam2Onnx_Inference](https://github.com/lyxlplhy/Sam2-collection/blob/master/README.md#onnx%E5%AF%BC%E5%87%BA)
-  * 新增yolo目标检测的结果作为sam2分割提示点(2024-11-27)
+  * 新增yolo目标检测的结果作为sam2分割提示点，后续将完善代码(2024-11-27)
 
 # 依赖
   * opencv=4.8
