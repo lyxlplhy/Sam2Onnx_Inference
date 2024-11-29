@@ -16,4 +16,5 @@
   * Sam2:[https://github.com/facebookresearch/sam2](https://github.com/facebookresearch/sam2)
   * OrtInference：[https://github.com/Aimol-l/OrtInference?tab=readme-ov-file](https://github.com/Aimol-l/OrtInference?tab=readme-ov-file)
   * ONNX-SAM2-Segment-Anything:[https://github.com/ibaiGorordo/ONNX-SAM2-Segment-Anything](https://github.com/ibaiGorordo/ONNX-SAM2-Segment-Anything)
-  * Sam2Onnx_Inference: [https://github.com/lyxlplhy/Sam2-collection/tree/master](https://github.com/lyxlplhy/Sam2-collection/tree/master)
+  * Sam2-collection: [https://github.com/lyxlplhy/Sam2-collection/tree/master](https://github.com/lyxlplhy/Sam2-collection/tree/master)
+
