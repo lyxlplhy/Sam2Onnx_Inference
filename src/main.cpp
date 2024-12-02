@@ -1,95 +1,15 @@
-#include <iostream>
 #include "SAM2.h"
 #include<string>
 #include <filesystem>
-#include<regex>
 #include"yolov8Predictor.h"
 #include <onnxruntime_cxx_api.h>
+namespace fs = std::filesystem;
 
 void sam2() {
     std::vector<std::string> onnx_paths{
-        "D:/sam2/segment-anything-2-main/tools/conver_tiny_encoder.onnx",
-        "D:/sam2/segment-anything-2-main/tools/conver_tiny_encoder.onnx",
-    };
-    auto sam2 = std::make_unique<SAM2>();
-    auto r = sam2->initialize(onnx_paths,false);
-    if (r.index() != 0) {
-        std::string error = std::get<std::string>(r);
-        std::cout << ("错误：{}", error);
-        return;
-    }
-
-    int type = 1;
-    cv::Rect prompt_box = { 1087,1200,1000,1000 };//xywh
-    cv::Point prompt_point = { 1373, 1682 };
-    sam2->setparms(type, prompt_box, prompt_point); // 在原始图像上的box,point
-    std::string video_path = "E:/LYX_date/SAM_data/SAM_data/sam2_lianxu/2.mp4";
-    cv::VideoCapture capture(video_path);
-    if (!capture.isOpened()) return;
-    //************************************************************
-    std::cout << "视频中图像的宽度=" << capture.get(cv::CAP_PROP_FRAME_WIDTH) << std::endl;
-    std::cout << "视频中图像的高度=" << capture.get(cv::CAP_PROP_FRAME_HEIGHT) << std::endl;
-    std::cout << "视频帧率=" << capture.get(cv::CAP_PROP_FPS) << std::endl;
-    std::cout << "视频的总帧数=" << capture.get(cv::CAP_PROP_FRAME_COUNT) << std::endl;
-    //************************************************************
-    cv::Mat frame;
-    size_t idx = 0;
-    std::string window_name = "frame";
-    cv::namedWindow(window_name, cv::WINDOW_NORMAL);
-    cv::resizeWindow(window_name, 1980,1080 ); // 例如将窗口大小设置为 640x480
-    while (true) {
-        frame = cv::imread("E:/LYX_date/mapImage/mapImage/00003595_999613_1107_1206_970_968_0.980981.jpg");
-        auto start = std::chrono::high_resolution_clock::now();
-        auto result = sam2->inference(frame);
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-        std::cout << ("frame = {},duration = {}ms", idx++, duration) << std::endl;
-        if (result.index() == 0) {
-            //std::string text = std::format("frame = {},fps={:.1f}", idx, 1000.0f / duration);
-            std::string text = "frame = " + std::to_string(idx) + ", fps = " + std::to_string(1000.0f / duration);
-            cv::putText(frame, text, cv::Point{ 30,40 }, 1, 2, cv::Scalar(0, 0, 255), 2);
-            cv::imshow(window_name, frame);
-            int key = cv::waitKey(1000);
-            if (key == 'q' || key == 27) break;
-        }
-        else {
-            std::string error = std::get<std::string>(result);
-            std::cout << ("错误：{}", error);
-            break;
-        }
-    }
-    capture.release();
-}
-
-void yolo()
-{
-    const std::vector<std::string> classNames = {"conver"};
-    YOLOPredictor predictor{ nullptr };
-    bool isGPU = false;
-    std::string modelPath = "D:/sam2/ultralytics-main/ultralytics-main/runs/detect/train4/weights/best.onnx";//yolo
-    std::vector<std::string> onnx_paths{
         "D:/sam2/segment-anything-2-main/tools/conver_model/conver_tiny_encoder.onnx",
         "D:/sam2/segment-anything-2-main/tools/conver_model/conver_tiny_decoder.onnx",
-    };//sam2
-    std::string Filename = "E:/LYX_date/yanwo_cover/1_yanwo_cover_data/Image_20240925140308619.jpg";
-    float confThreshold = 0.4f;
-    float iouThreshold = 0.4f;
-    float maskThreshold=0.5f;
-    try
-    {
-        predictor = YOLOPredictor(modelPath, isGPU,
-            confThreshold,
-            iouThreshold,
-            maskThreshold);
-        std::cout << "Model was initialized." << std::endl;
-        assert(classNames.size() == predictor.classNums);
-        std::regex pattern(".+\\.(jpg|jpeg|png|gif)$");
-        std::cout << "Start predicting..." << std::endl;
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << e.what() << std::endl;
-    }
+    };
     auto sam2 = std::make_unique<SAM2>();
     auto r = sam2->initialize(onnx_paths, false);
     if (r.index() != 0) {
@@ -97,31 +17,104 @@ void yolo()
         std::cout << ("错误：{}", error);
         return;
     }
-    int type = 1;//0用框，1用点
-    cv::Mat image = cv::imread(Filename);
-    std::vector<Yolov8Result> result = predictor.predict(image);
-    //utils::visualizeDetection(image, result, classNames);
-    for (int idx = 0;idx < result.size();++idx)
-    {
-        cv::Point prompt_point = { result[idx].box.x+result[idx].box.width/2,result[idx].box.y + result[idx].box.height / 2 };
-        sam2->setparms(type, result[idx].box, prompt_point); // 在原始图像上的box,point
-        cv::Mat sam2_frame = cv::imread(Filename);
-        auto result = sam2->inference(sam2_frame);
-        if (result.index() == 0) {
-            std::string text = "frame = " + std::to_string(idx) ;
-            cv::putText(sam2_frame, text, cv::Point{ 30,40 }, 1, 2, cv::Scalar(0, 0, 255), 2);
-            cv::imshow("window_name", sam2_frame);
-            int key = cv::waitKey(0);
-            if (key == 'q' || key == 27) break;
-        }
-        else {
-            std::string error = std::get<std::string>(result);
-            std::cout << ("错误：{}", error);
-            break;
-        }
 
+    int type = 1;//0点作为提示 1框作为提示
+    cv::Rect prompt_box = { 1087,1200,1000,1000 };//xywh
+    cv::Point prompt_point = { 835, 352 };
+    sam2->setparms(type, prompt_box, prompt_point); // 在原始图像上的box,point
+    cv::Mat frame;
+    size_t idx = 0;
+    std::string window_name = "frame";
+    cv::namedWindow(window_name, cv::WINDOW_NORMAL);
+    cv::resizeWindow(window_name, 1980, 1080); // 例如将窗口大小设置为 640x480
+    frame = cv::imread("E:/LYX_date/yanwo_cover/1_yanwo_cover_data/Image_20240925171424731.jpg");
+    auto start = std::chrono::high_resolution_clock::now();
+    auto result = sam2->inference(frame);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << ("frame = {},duration = {}ms", idx++, duration) << std::endl;
+    if (result.index() == 0) {
+        std::string text = "frame = " + std::to_string(idx) + ", fps = " + std::to_string(1000.0f / duration);
+        cv::putText(frame, text, cv::Point{ 30,40 }, 1, 2, cv::Scalar(0, 0, 255), 2);
+        cv::imshow(window_name, frame);
+        int key = cv::waitKey(0);
     }
+    else {
+        std::string error = std::get<std::string>(result);
+        std::cout << ("错误：{}", error);
+    }
+}
 
+
+void yolo_sam2() {
+    const std::vector<std::string> classNames = { "conver" };
+    YOLOPredictor predictor{ nullptr };
+    bool isGPU = false;
+    std::string modelPath = "D:/sam2/ultralytics-main/ultralytics-main/runs/detect/train27/weights/best.onnx"; // YOLO模型路径
+    std::vector<std::string> onnx_paths{
+        "D:/sam2/segment-anything-2-main/tools/conver_tiny_encoder.onnx",
+        "D:/sam2/segment-anything-2-main/tools/conver_tiny_decoder.onnx",
+    }; // SAM2模型路径
+    std::string inputFolder = "E:/LYX_date/yanwo_cover/1_yanwo_cover_data";  // 输入文件夹
+    std::string outputFolder = "E:/LYX_date/yanwo_cover/c++_sam2/"; // 输出文件夹
+    if (!fs::exists(outputFolder)) {
+        fs::create_directories(outputFolder);
+    }
+    float confThreshold = 0.4f;
+    float iouThreshold = 0.4f;
+    float maskThreshold = 0.5f;
+    try {
+        predictor = YOLOPredictor(modelPath, isGPU, confThreshold, iouThreshold, maskThreshold);
+        std::cout << "YOLO模型已初始化。" << std::endl;
+        assert(classNames.size() == predictor.classNums);
+    }
+    catch (const std::exception& e) {
+        std::cerr << "YOLO模型初始化失败: " << e.what() << std::endl;
+        return;
+    }
+    auto sam2 = std::make_unique<SAM2>();
+    auto r = sam2->initialize(onnx_paths, false);
+    if (r.index() != 0) {
+        std::string error = std::get<std::string>(r);
+        std::cerr << "SAM2模型初始化失败: " << error << std::endl;
+        return;
+    }
+    std::cout << "SAM2模型已初始化。" << std::endl;
+    for (const auto& entry : fs::directory_iterator(inputFolder)) {
+        if (!entry.is_regular_file()) continue;
+        std::string filePath = entry.path().string();
+        if (filePath.find(".jpg") == std::string::npos &&
+            filePath.find(".jpeg") == std::string::npos &&
+            filePath.find(".png") == std::string::npos) {
+            continue;
+        }
+        cv::Mat image = cv::imread(filePath);
+        if (image.empty()) {
+            std::cerr << "无法加载图像: " << filePath << std::endl;
+            continue;
+        }
+        std::cout << "处理图像: " << filePath << std::endl;
+        std::vector<Yolov8Result> results = predictor.predict(image);
+        for (int idx = 0; idx < results.size(); ++idx) {
+            cv::Point prompt_point = {
+                results[idx].box.x + results[idx].box.width / 2,
+                results[idx].box.y + results[idx].box.height / 2
+            };
+            sam2->setparms(0, results[idx].box, prompt_point); // 使用点提示
+            cv::Mat sam2_frame = image.clone();
+            auto inferenceResult = sam2->inference(sam2_frame);
+            if (inferenceResult.index() == 0) {
+                std::string outputFileName = outputFolder + entry.path().stem().string() + "_result.jpg";
+                cv::imwrite(outputFileName, sam2_frame);
+                std::cout << "分割结果保存到: " << outputFileName << std::endl;
+            }
+            else {
+                std::string error = std::get<std::string>(inferenceResult);
+                std::cerr << "分割失败: " << error << std::endl;
+            }
+        }
+    }
+    std::cout << "处理完成。" << std::endl;
 }
 
 bool isGpuAvailable() {
@@ -149,9 +142,11 @@ bool isGpuAvailable() {
 
 int main(int argc, char const* argv[]) {
 
-    yolo();
+    sam2();
     return 0;
 }
+
+
 
 
 
