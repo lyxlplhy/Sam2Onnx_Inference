@@ -14,11 +14,11 @@ void sam2() {
     auto r = sam2->initialize(onnx_paths, false);
     if (r.index() != 0) {
         std::string error = std::get<std::string>(r);
-        std::cout << ("错误：{}", error);
+        std::cout << ("error：{}", error);
         return;
     }
 
-    int type = 1;//0点作为提示 1框作为提示
+    int type = 0;//0点作为提示 1框作为提示
     cv::Rect prompt_box = { 1087,1200,1000,1000 };//xywh
     cv::Point prompt_point = { 835, 352 };
     sam2->setparms(type, prompt_box, prompt_point); // 在原始图像上的box,point
@@ -41,7 +41,7 @@ void sam2() {
     }
     else {
         std::string error = std::get<std::string>(result);
-        std::cout << ("错误：{}", error);
+        std::cout << ("error：{}", error);
     }
 }
 
@@ -65,21 +65,21 @@ void yolo_sam2() {
     float maskThreshold = 0.5f;
     try {
         predictor = YOLOPredictor(modelPath, isGPU, confThreshold, iouThreshold, maskThreshold);
-        std::cout << "YOLO模型已初始化。" << std::endl;
+        std::cout << "YOLO initialization successful。" << std::endl;
         assert(classNames.size() == predictor.classNums);
     }
     catch (const std::exception& e) {
-        std::cerr << "YOLO模型初始化失败: " << e.what() << std::endl;
+        std::cerr << "YOLO initialization failed: " << e.what() << std::endl;
         return;
     }
     auto sam2 = std::make_unique<SAM2>();
     auto r = sam2->initialize(onnx_paths, false);
     if (r.index() != 0) {
         std::string error = std::get<std::string>(r);
-        std::cerr << "SAM2模型初始化失败: " << error << std::endl;
+        std::cerr << "SAM2 initialization failed: " << error << std::endl;
         return;
     }
-    std::cout << "SAM2模型已初始化。" << std::endl;
+    std::cout << "SAM2 initialization successful。" << std::endl;
     for (const auto& entry : fs::directory_iterator(inputFolder)) {
         if (!entry.is_regular_file()) continue;
         std::string filePath = entry.path().string();
@@ -90,31 +90,30 @@ void yolo_sam2() {
         }
         cv::Mat image = cv::imread(filePath);
         if (image.empty()) {
-            std::cerr << "无法加载图像: " << filePath << std::endl;
+            std::cerr << "Image Load Failure: " << filePath << std::endl;
             continue;
         }
-        std::cout << "处理图像: " << filePath << std::endl;
         std::vector<Yolov8Result> results = predictor.predict(image);
         for (int idx = 0; idx < results.size(); ++idx) {
             cv::Point prompt_point = {
                 results[idx].box.x + results[idx].box.width / 2,
                 results[idx].box.y + results[idx].box.height / 2
             };
-            sam2->setparms(0, results[idx].box, prompt_point); // 使用点提示
+            sam2->setparms(0, results[idx].box, prompt_point); // 使用点提示,框为1
             cv::Mat sam2_frame = image.clone();
             auto inferenceResult = sam2->inference(sam2_frame);
             if (inferenceResult.index() == 0) {
                 std::string outputFileName = outputFolder + entry.path().stem().string() + "_result.jpg";
                 cv::imwrite(outputFileName, sam2_frame);
-                std::cout << "分割结果保存到: " << outputFileName << std::endl;
+                std::cout << "results are saved to the: " << outputFileName << std::endl;
             }
             else {
                 std::string error = std::get<std::string>(inferenceResult);
-                std::cerr << "分割失败: " << error << std::endl;
+                std::cerr << "Segmentation Failure: " << error << std::endl;
             }
         }
     }
-    std::cout << "处理完成。" << std::endl;
+    std::cout << "ok" << std::endl;
 }
 
 bool isGpuAvailable() {
@@ -141,7 +140,6 @@ bool isGpuAvailable() {
 }
 
 int main(int argc, char const* argv[]) {
-
     sam2();
     return 0;
 }
