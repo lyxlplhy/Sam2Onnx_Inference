@@ -1,5 +1,5 @@
 # Sam2Onnx_Inference
-SAM2分割实现文件包含Model.h、Sam2.h、Sam2.cpp和测试代码main.cpp
+SAM2分割实现文件包含Model.h、Sam2.h、Sam2.cpp和测试代码main.cpp，支持float32、float16推理
 
 ## 功能：
   * Sam2单帧照片，单目标分割，使用点或者框作为提示信息(节省推理效率，去除了视频推理中记忆模块的使用)
