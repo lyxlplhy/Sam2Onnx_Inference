@@ -1,7 +1,6 @@
 # Sam2Onnx_Inference
 SAM2分割实现文件包含Model.h、Sam2.h、Sam2.cpp和测试代码main.cpp，支持float32、float16推理
 ![1_out00000008_206448_result](https://github.com/user-attachments/assets/05bee99a-06c6-4ecc-a1f3-d78f4f81ad26)
-![Uploading 1_out00000010_206608_result.jpg…]()
 
 
 ## 功能：
