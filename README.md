@@ -2,6 +2,7 @@
 SAM2分割实现文件包含Model.h、Sam2.h、Sam2.cpp和测试代码main.cpp，支持float32、float16推理
 
 ![1_out00000008_206448_result](https://github.com/user-attachments/assets/05bee99a-06c6-4ecc-a1f3-d78f4f81ad26)
+<img src="https://github.com/user-attachments/assets/05bee99a-06c6-4ecc-a1f3-d78f4f81ad26" alt="1_out00000008_206448_result" width="400">
 
 
 ## 功能：
