@@ -6,7 +6,7 @@ SAM2分割实现文件包含Model.h、Sam2.h、Sam2.cpp和测试代码main.cpp�
 
 ## 功能：
   * Sam2单帧照片，单目标分割，使用点或者框作为提示信息(节省推理效率，去除了视频推理中记忆模块的使用)
-  * 输入多个提示点、框同时分割单张照片中多目标代码调试中，位于 [Multi-object-segmentation](https://github.com/lyxlplhy/Sam2Onnx_Inference/edit/Multi-object-segmentation/)
+  * 输入多个提示点、框同时分割单张照片中多目标代码调试中，位于 [Multi-object-segmentation](https://github.com/lyxlplhy/Sam2Onnx_Inference/edit/Multi-object-seg/)
   * yolo目标检测+sam2分割
   * Sam2所使用onnx权重格式生成代码[Sam2Onnx_Inference](https://github.com/lyxlplhy/Sam2-collection?tab=readme-ov-file#onnx%E5%AF%BC%E5%87%BA)
 
